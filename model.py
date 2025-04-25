@@ -16,10 +16,9 @@ class ImageCaptioningModel:
         """Lazy-load the model only when needed."""
         if self.processor is None or self.model is None:
             print("Loading BLIP-small model...")
-            self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-small")
-            self.model = BlipForConditionalGeneration.from_pretrained(
-                "Salesforce/blip-image-captioning-small"
-            ).to(self.device)
+            # Change this line in model.py
+            self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+            self.model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
             print("Model loaded successfully!")
 
     def generate_caption(self, image):
