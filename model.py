@@ -1,3 +1,5 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
 import torch
 from PIL import Image
 from transformers import BlipProcessor, BlipForConditionalGeneration
@@ -34,7 +36,9 @@ class ImageCaptioningModel:
             raise ValueError("Expected PIL Image, base64 string, or bytes")
 
         inputs = self.processor(image, return_tensors="pt").to(self.device)
-        out = self.model.generate(**inputs)
+        with torch.no_grad():
+            out = self.model.generate(**inputs)
+
         caption = self.processor.decode(out[0], skip_special_tokens=True)
         return caption
 
