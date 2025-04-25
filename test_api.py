@@ -4,7 +4,7 @@ import os
 import argparse
 import time
 
-def test_api(image_path, endpoint="caption_with_box", url="http://localhost:5000/"):
+def test_api(image_path, endpoint="caption_with_box", url="https://api-caption-generator-blip.onrender.com"):
     """Test the image captioning API with a local image."""
     if not os.path.exists(image_path):
         print(f"❌ Image not found: {image_path}")
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Test the image captioning API")
     parser.add_argument("image_path", help="Path to the image file")
     parser.add_argument("--endpoint", default="caption", choices=["caption", "caption_with_box"], help="Endpoint to test")
-    parser.add_argument("--url", default="http://localhost:5000/", help="API base URL (default: http://localhost:5000/)")
+    parser.add_argument("--url", default="https://api-caption-generator-blip.onrender.com", help="API base URL (default: https://api-caption-generator-blip.onrender.com)")
 
     args = parser.parse_args()
     test_api(args.image_path, args.endpoint, args.url)
