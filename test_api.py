@@ -7,7 +7,7 @@ from PIL import Image
 import io
 import time
 
-def test_api(image_path, endpoint="caption", url="http://127.0.0.1:5000"):
+def test_api(image_path, endpoint="caption", url="https://api-caption-generator-blip.onrender.com"):
     """Test the image captioning API with a local image."""
     print(f"Testing API endpoint: {url}/{endpoint}")
     
@@ -57,8 +57,8 @@ if __name__ == "__main__":
     parser.add_argument('image_path', help='Path to the image file')
     parser.add_argument('--endpoint', default='caption', choices=['caption', 'caption_with_box'],
                         help='API endpoint to test (caption or caption_with_box)')
-    parser.add_argument('--url', default='http://127.0.0.1:5000',
-                        help='API URL (default: http://127.0.0.1:5000)')
+    parser.add_argument('--url', default='https://api-caption-generator-blip.onrender.com',
+                        help='API URL (default: https://api-caption-generator-blip.onrender.com)')
     
     args = parser.parse_args()
     test_api(args.image_path, args.endpoint, args.url)

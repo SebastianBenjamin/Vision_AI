@@ -8,12 +8,18 @@ import base64
 
 class ImageCaptioningModel:
     def __init__(self):
-        print("Loading image captioning model...")
-        self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-        self.model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
-        print("Model loaded successfully!")
+        self.processor = None
+        self.model = None
         
+    def _ensure_loaded(self):
+        if self.processor is None or self.model is None:
+            print("Loading image captioning model...")
+            self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+            self.model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
+            print("Model loaded successfully!")
+    
     def generate_caption(self, image):
+        self._ensure_loaded()
         """Generate a caption for the given image."""
         if isinstance(image, str):  # If image is a base64 string
             image = self.base64_to_pil(image)
