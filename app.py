@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
+from PIL import Image  # Add this line at the top with other imports
 from model import ImageCaptioningModel
 import time
 
