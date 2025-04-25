@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ESP32 Real-Time Image Captioning</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .image-container {
+            position: relative;
+            margin: 20px auto;
+            max-width: 640px;
+        }
+        .video-feed {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .caption-box {
+            background-color: rgba(44, 62, 80, 0.8);
+            color: white;
+            padding: 10px 15px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .status {
+            text-align: center;
+            margin: 10px 0;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .auto-refresh input {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESP32 Real-Time Image Captioning</h1>
+        
+        <div class="status">
+            Status: <span id="statusText">Ready</span>
+        </div>
+        
+        <div class="image-container">
+            <img id="videoFeed" class="video-feed" src="/stream" alt="Camera Feed">
+            <div class="caption-box">
+                <span id="captionText">Waiting for caption...</span>
+            </div>
+        </div>
+        
+        <div class="auto-refresh">
+            <input type="checkbox" id="autoRefresh" checked>
+            <label for="autoRefresh">Auto refresh every 5 seconds</label>
+        </div>
+        
+        <div class="controls">
+            <button id="captureBtn">Capture & Generate Caption</button>
+            <button id="refreshBtn">Refresh Feed</button>
+        </div>
+    </div>
+
+    <script>
+        // Elements
+        const statusText = document.getElementById('statusText');
+        const videoFeed = document.getElementById('videoFeed');
+        const captionText = document.getElementById('captionText');
+        const captureBtn = document.getElementById('captureBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const autoRefreshCheckbox = document.getElementById('autoRefresh');
+        
+        // Variables
+        let autoRefreshInterval;
+        
+        // Initialize
+        function init() {
+            // Set up auto refresh
+            setAutoRefresh(autoRefreshCheckbox.checked);
+            
+            // Event listeners
+            captureBtn.addEventListener('click', captureImage);
+            refreshBtn.addEventListener('click', refreshFeed);
+            autoRefreshCheckbox.addEventListener('change', () => {
+                setAutoRefresh(autoRefreshCheckbox.checked);
+            });
+        }
+        
+        // Auto refresh
+        function setAutoRefresh(enabled) {
+            clearInterval(autoRefreshInterval);
+            if (enabled) {
+                autoRefreshInterval = setInterval(refreshFeed, 5000);
+            }
+        }
+        
+        // Refresh feed
+        function refreshFeed() {
+            videoFeed.src = '/stream?' + new Date().getTime();
+        }
+        
+        // Capture image and generate caption
+        function captureImage() {
+            statusText.textContent = 'Processing...';
+            captureBtn.disabled = true;
+            
+            fetch('/capture')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    captionText.textContent = data.caption;
+                    videoFeed.src = 'data:image/jpeg;base64,' + data.image;
+                    statusText.textContent = 'Ready';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    statusText.textContent = 'Error: ' + error.message;
+                })
+                .finally(() => {
+                    captureBtn.disabled = false;
+                });
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
