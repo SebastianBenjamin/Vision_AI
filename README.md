@@ -4,6 +4,7 @@ A Flask-based API that generates captions for images using a custom deep learnin
 
 * Generating image captions
 * Generating captions with bounding boxes
+![image](https://github.com/user-attachments/assets/371c5d97-7b02-43ac-b84c-1de351257412)
 
 ## 🚀 Features
 
