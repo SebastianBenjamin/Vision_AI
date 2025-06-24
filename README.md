@@ -1,4 +1,4 @@
-# 🖼️ Gen Vision AI
+# 🖼️ Vision AI
 
 A Flask-based API that generates captions for images using a custom deep learning model (BLIP). The API provides endpoints for:
 
